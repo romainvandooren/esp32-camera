@@ -390,7 +390,18 @@ static void cam_task(void *arg)
 
                         if (cam_obj->psram_mode) {
                             if (cam_obj->jpeg_mode) {
-                                frame_buffer_event->len = cnt * cam_obj->dma_half_buffer_size;
+                                /* cnt counts only fully-committed DMA blocks (those that
+                                 * generated in_suc_eof).  The final partial block – which
+                                 * holds the JPEG EOI – is already in PSRAM but its
+                                 * in_suc_eof never fires because the block is not full.
+                                 * Include one extra block so the EOI search in cam_take()
+                                 * covers that tail region.  The frame buffer was allocated
+                                 * with an extra dma_half_buffer_size of headroom for this. */
+                                frame_buffer_event->len = (cnt + 1) * cam_obj->dma_half_buffer_size;
+                                size_t fb_allocated_size = cam_obj->fb_size + cam_obj->dma_half_buffer_size;
+                                if (frame_buffer_event->len > fb_allocated_size) {
+                                    frame_buffer_event->len = fb_allocated_size;
+                                }
                             } else {
                                 frame_buffer_event->len = cam_obj->recv_size;
                             }
