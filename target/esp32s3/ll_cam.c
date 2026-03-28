@@ -339,7 +339,7 @@ esp_err_t ll_cam_config(cam_obj_t *cam, const camera_config_t *config)
     LCD_CAM.cam_ctrl.cam_byte_order = cam->swap_data;
     LCD_CAM.cam_ctrl.cam_bit_order = 0;
     LCD_CAM.cam_ctrl.cam_line_int_en = 0;
-    LCD_CAM.cam_ctrl.cam_vs_eof_en = 0; //1: CAM_VSYNC to generate in_suc_eof. 0: in_suc_eof is controlled by reg_cam_rec_data_cyclelen
+    LCD_CAM.cam_ctrl.cam_vs_eof_en = 1; //1: CAM_VSYNC to generate in_suc_eof. 0: in_suc_eof is controlled by reg_cam_rec_data_cyclelen
 
     LCD_CAM.cam_ctrl1.val = 0;
     LCD_CAM.cam_ctrl1.cam_rec_data_bytelen = LCD_CAM_DMA_NODE_BUFFER_MAX_SIZE - 1; // Cannot be assigned to 0, and it is easy to overflow
